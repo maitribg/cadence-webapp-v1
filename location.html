@@ -71,25 +71,48 @@
         }
     </style>
 </head>
-<body class="bg-white min-h-screen">
-    <!-- Header -->
-    <header class="bg-gradient-to-r from-woofIndigo to-woofPurple text-white px-4 py-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <button onclick="window.history.back()" class="bg-white/20 hover:bg-white/30 p-2 rounded-full transition">
-                    <i class="fas fa-arrow-left"></i>
-                </button>
-                <div class="flex items-center">
-                    <i class="fas fa-paw text-2xl mr-2"></i>
-                    <h1 class="text-xl font-bold">WoofWise</h1>
+<body class="bg-white font-sans text-[#2b2c3c]">
+    <div class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-[#574ce7] text-white shadow-lg">
+            <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-dog text-2xl"></i>
+                    <h1 class="text-2xl font-bold">WoofWise</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <i class="fas fa-bone text-xl"></i>
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User" class="h-8 w-8 rounded-full">
+                        <span class="hidden md:inline">Sarah Johnson</span>
+                    </div>
                 </div>
             </div>
-            <div class="flex items-center space-x-2">
-                <span class="text-sm bg-white/20 px-3 py-1 rounded-full">Live</span>
-                <div class="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+        </header>
+
+    <nav class="bg-white shadow-sm">
+        <div class="container mx-auto px-4">
+            <div class="flex space-x-6">
+                <a href="index.html" class="py-3 px-1 text-gray-500 hover:text-indigo-600">
+                    <i class="fas fa-home mr-1"></i> Dashboard
+                </a>
+                <a href="emotions.html" class="py-3 px-1 text-gray-500 hover:text-indigo-600">
+                    <i class="fas fa-smile-beam mr-1"></i> Emotion Analysis
+                </a>
+                <a href="location.html" class="py-3 px-1 border-b-2 border-indigo-600 text-indigo-600 font-medium">
+                    <i class="fas fa-map-marked-alt mr-1"></i> Location History
+                </a>
+                <a href="#" class="py-3 px-1 text-gray-500 hover:text-indigo-600">
+                    <i class="fas fa-cog mr-1"></i> Settings
+                </a>
             </div>
         </div>
-    </header>
+    </nav>
+    
+
 
     <main class="container mx-auto px-4 py-6">
         <!-- Pet Info -->
@@ -270,29 +293,6 @@
             </div>
         </div>
     </main>
-
-    <!-- Bottom Navigation -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2">
-        <div class="flex justify-around">
-            <a href="#" class="flex flex-col items-center text-woofPurple">
-                <i class="fas fa-map-marked-alt text-xl"></i>
-                <span class="text-xs mt-1">Map</span>
-            </a>
-            <a href="#" class="flex flex-col items-center text-woofGray">
-                <i class="fas fa-chart-line text-xl"></i>
-                <span class="text-xs mt-1">Activity</span>
-            </a>
-            <a href="#" class="flex flex-col items-center text-woofGray">
-                <i class="fas fa-bell text-xl"></i>
-                <span class="text-xs mt-1">Alerts</span>
-            </a>
-            <a href="#" class="flex flex-col items-center text-woofGray">
-                <i class="fas fa-cog text-xl"></i>
-                <span class="text-xs mt-1">Settings</span>
-            </a>
-        </div>
-    </nav>
-
     <script>
         // This would be replaced with actual map functionality
         console.log('Location tracking page loaded');
