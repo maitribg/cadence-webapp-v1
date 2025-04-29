@@ -3,11 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PawSense - Smart Dog Collar Monitor</title>
+    <title>WoofWise - Smart Dog Collar Monitor</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        :root {
+            --primary-color: #574ce7;
+            --accent-color: #c34bc9;
+            --dark-bg: #141627;
+            --text-muted: #61627c;
+        }
         @keyframes pulse {
             0% { opacity: 1; }
             50% { opacity: 0.5; }
@@ -34,18 +40,18 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 font-sans">
+<body class="bg-white font-sans text-[#2b2c3c]">
     <div class="min-h-screen flex flex-col">
         <!-- Header -->
-        <header class="bg-indigo-600 text-white shadow-lg">
+        <header class="bg-[#574ce7] text-white shadow-lg">
             <div class="container mx-auto px-4 py-4 flex justify-between items-center">
                 <div class="flex items-center space-x-2">
-                    <i class="fas fa-paw text-2xl"></i>
-                    <h1 class="text-2xl font-bold">PawSense</h1>
+                    <i class="fas fa-dog text-2xl"></i>
+                    <h1 class="text-2xl font-bold">WoofWise</h1>
                 </div>
                 <div class="flex items-center space-x-4">
                     <div class="relative">
-                        <i class="fas fa-bell text-xl"></i>
+                        <i class="fas fa-bone text-xl"></i>
                         <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
                     </div>
                     <div class="flex items-center space-x-2">
@@ -243,10 +249,10 @@
                 <!-- Right Column -->
                 <div class="space-y-6">
                     <!-- Alerts Card -->
-                    <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="bg-white rounded-xl shadow-md p-6 order-1 lg:order-none">
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-xl font-semibold">Alerts</h2>
-                            <span class="text-sm text-indigo-600">See all</span>
+                            <span class="text-sm text-[#574ce7]">See all</span>
                         </div>
                         
                         <div class="space-y-4">

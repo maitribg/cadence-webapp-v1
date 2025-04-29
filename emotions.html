@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PawSense - Emotion Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        .emotion-card {
+            transition: all 0.3s ease;
+        }
+        .emotion-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .timeline-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 16px;
+            top: 24px;
+            height: calc(100% - 24px);
+            width: 2px;
+            background: #E5E7EB;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-indigo-600 text-white shadow-lg">
+            <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-paw text-2xl"></i>
+                    <h1 class="text-2xl font-bold">PawSense</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <i class="fas fa-bell text-xl"></i>
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User" class="h-8 w-8 rounded-full">
+                        <span class="hidden md:inline">Sarah Johnson</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="bg-white shadow-sm">
+            <div class="container mx-auto px-4">
+                <div class="flex space-x-6">
+                    <a href="index.html" class="py-3 px-1 text-gray-500 hover:text-indigo-600">
+                        <i class="fas fa-home mr-1"></i> Dashboard
+                    </a>
+                    <a href="emotion.html" class="py-3 px-1 border-b-2 border-indigo-600 text-indigo-600 font-medium">
+                        <i class="fas fa-smile-beam mr-1"></i> Emotion Analysis
+                    </a>
+                    <a href="#" class="py-3 px-1 text-gray-500 hover:text-indigo-600">
+                        <i class="fas fa-map-marked-alt mr-1"></i> Location History
+                    </a>
+                    <a href="#" class="py-3 px-1 text-gray-500 hover:text-indigo-600">
+                        <i class="fas fa-cog mr-1"></i> Settings
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-1 container mx-auto px-4 py-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Max's Emotion Analysis</h2>
+                <div class="flex space-x-2">
+                    <button class="px-4 py-2 bg-white border rounded-lg text-sm font-medium">
+                        <i class="fas fa-calendar-alt mr-1"></i> Last 7 Days
+                    </button>
+                    <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium">
+                        <i class="fas fa-download mr-1"></i> Export Report
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Left Column -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Current Emotion Summary -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold">Current Emotional State</h3>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm text-gray-500">Updated: Just now</span>
+                                <div class="h-2 w-2 rounded-full bg-green-500 pulse"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <!-- Happy -->
+                            <div class="emotion-card bg-green-50 rounded-lg p-4 text-center">
+                                <div class="h-12 w-12 mx-auto rounded-full bg-green-100 flex items-center justify-center">
+                                    <i class="fas fa-laugh-beam text-green-600 text-xl"></i>
+                                </div>
+                                <p class="text-sm text-gray-500 mt-2">Happy</p>
+                                <p class="text-xl font-bold text-green-600">72%</p>
+                                <p class="text-xs text-gray-500">+5% from yesterday</p>
+                            </div>
+                            
+                            <!-- Relaxed -->
+                            <div class="emotion-card bg-blue-50 rounded-lg p-4 text-center">
+                                <div class="h-12 w-12 mx-auto rounded-full bg-blue-100 flex items-center justify-center">
+                                    <i class="fas fa-spa text-blue-600 text-xl"></i>
+                                </div>
+                                <p class="text-sm text-gray-500 mt-2">Relaxed</p>
+                                <p class="text-xl font-bold text-blue-600">65%</p>
+                                <p class="text-xs text-gray-500">+12% from yesterday</p>
+                            </div>
+                            
+                            <!-- Anxious -->
+                            <div class="emotion-card bg-yellow-50 rounded-lg p-4 text-center">
+                                <div class="h-12 w-12 mx-auto rounded-full bg-yellow-100 flex items-center justify-center">
+                                    <i class="fas fa-flushed text-yellow-600 text-xl"></i>
+                                </div>
+                                <p class="text-sm text-gray-500 mt-2">Anxious</p>
+                                <p class="text-xl font-bold text-yellow-600">18%</p>
+                                <p class="text-xs text-gray-500">-7% from yesterday</p>
+                            </div>
+                            
+                            <!-- Stressed -->
+                            <div class="emotion-card bg-red-50 rounded-lg p-4 text-center">
+                                <div class="h-12 w-12 mx-auto rounded-full bg-red-100 flex items-center justify-center">
+                                    <i class="fas fa-tired text-red-600 text-xl"></i>
+                                </div>
+                                <p class="text-sm text-gray-500 mt-2">Stressed</p>
+                                <p class="text-xl font-bold text-red-600">8%</p>
+                                <p class="text-xs text-gray-500">-3% from yesterday</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Emotion Trends Chart -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold">7-Day Emotion Trends</h3>
+                            <div class="flex space-x-2">
+                                <button class="px-3 py-1 text-sm bg-indigo-100 text-indigo-700 rounded-lg">Week</button>
+                                <button class="px-3 py-1 text-sm bg-white text-gray-700 rounded-lg">Month</button>
+                                <button class="px-3 py-1 text-sm bg-white text-gray-700 rounded-lg">Year</button>
+                            </div>
+                        </div>
+                        <div class="h-80">
+                            <canvas id="emotionTrendsChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Stress Triggers -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 class="text-lg font-semibold mb-4">Stress Triggers Analysis</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-medium text-gray-700 mb-3">Common Stress Triggers</h4>
+                                <div class="space-y-4">
+                                    <div>
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-sm">Loud Noises</span>
+                                            <span class="text-sm font-medium">42%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-red-500 h-2 rounded-full" style="width: 42%"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-sm">Strangers</span>
+                                            <span class="text-sm font-medium">35%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-red-500 h-2 rounded-full" style="width: 35%"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-sm">Being Alone</span>
+                                            <span class="text-sm font-medium">28%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-red-500 h-2 rounded-full" style="width: 28%"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-sm">Vet Visits</span>
+                                            <span class="text-sm font-medium">22%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-red-500 h-2 rounded-full" style="width: 22%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-700 mb-3">Calming Activities</h4>
+                                <div class="space-y-4">
+                                    <div>
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-sm">Playing Fetch</span>
+                                            <span class="text-sm font-medium">+38% calm</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-green-500 h-2 rounded-full" style="width: 38%"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-sm">Chewing Toys</span>
+                                            <span class="text-sm font-medium">+32% calm</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-green-500 h-2 rounded-full" style="width: 32%"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-sm">Cuddling</span>
+                                            <span class="text-sm font-medium">+45% calm</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-green-500 h-2 rounded-full" style="width: 45%"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-sm">Walks in Park</span>
+                                            <span class="text-sm font-medium">+52% calm</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-green-500 h-2 rounded-full" style="width: 52%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Emotion Timeline -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 class="text-lg font-semibold mb-4">Recent Emotion Events</h3>
+                        <div class="space-y-4">
+                            <!-- Timeline Item -->
+                            <div class="relative timeline-item pl-8">
+                                <div class="absolute left-0 top-0 h-4 w-4 rounded-full bg-indigo-500 flex items-center justify-center">
+                                    <div class="h-2 w-2 rounded-full bg-white"></div>
+                                </div>
+                                <div class="bg-indigo-50 rounded-lg p-4">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h4 class="font-medium">Happy & Playful</h4>
+                                            <p class="text-sm text-gray-600">Playing fetch in the backyard</p>
+                                        </div>
+                                        <div class="text-sm text-gray-500">Today, 3:45 PM</div>
+                                    </div>
+                                    <div class="mt-2 flex items-center space-x-2">
+                                        <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Duration: 28 min</span>
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">Intensity: High</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Timeline Item -->
+                            <div class="relative timeline-item pl-8">
+                                <div class="absolute left-0 top-0 h-4 w-4 rounded-full bg-yellow-500 flex items-center justify-center">
+                                    <div class="h-2 w-2 rounded-full bg-white"></div>
+                                </div>
+                                <div class="bg-yellow-50 rounded-lg p-4">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h4 class="font-medium">Anxious & Restless</h4>
+                                            <p class="text-sm text-gray-600">Mailman arrived at the door</p>
+                                        </div>
+                                        <div class="text-sm text-gray-500">Today, 1:30 PM</div>
+                                    </div>
+                                    <div class="mt-2 flex items-center space-x-2">
+                                        <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">Duration: 12 min</span>
+                                        <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">Intensity: Medium</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Timeline Item -->
+                            <div class="relative timeline-item pl-8">
+                                <div class="absolute left-0 top-0 h-4 w-4 rounded-full bg-green-500 flex items-center justify-center">
+                                    <div class="h-2 w-2 rounded-full bg-white"></div>
+                                </div>
+                                <div class="bg-green-50 rounded-lg p-4">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h4 class="font-medium">Relaxed & Content</h4>
+                                            <p class="text-sm text-gray-600">Napping after morning walk</p>
+                                        </div>
+                                        <div class="text-sm text-gray-500">Today, 11:15 AM</div>
+                                    </div>
+                                    <div class="mt-2 flex items-center space-x-2">
+                                        <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Duration: 1h 45min</span>
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">Intensity: Low</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Timeline Item -->
+                            <div class="relative timeline-item pl-8">
+                                <div class="absolute left-0 top-0 h-4 w-4 rounded-full bg-red-500 flex items-center justify-center">
+                                    <div class="h-2 w-2 rounded-full bg-white"></div>
+                                </div>
+                                <div class="bg-red-50 rounded-lg p-4">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h4 class="font-medium">Stressed & Fearful</h4>
+                                            <p class="text-sm text-gray-600">Thunderstorm passed by</p>
+                                        </div>
+                                        <div class="text-sm text-gray-500">Yesterday, 6:20 PM</div>
+                                    </div>
+                                    <div class="mt-2 flex items-center space-x-2">
+                                        <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">Duration: 42 min</span>
+                                        <span class="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">Intensity: High</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="mt-4 w-full py-2 bg-white border rounded-lg text-sm font-medium text-indigo-600">
+                            <i class="fas fa-history mr-1"></i> Load More Events
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Right Column -->
+                <div class="space-y-6">
+                    <!-- Weekly Summary -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 class="text-lg font-semibold mb-4">Weekly Emotion Summary</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center space-x-2">
+                                    <div class="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                                        <i class="fas fa-laugh-beam text-green-500"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm">Happiness</p>
+                                        <p class="text-xs text-gray-500">Avg. 68% this week</p>
+                                    </div>
+                                </div>
+                                <span class="text-sm font-medium text-green-500">+7% <i class="fas fa-arrow-up"></i></span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center space-x-2">
+                                    <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                        <i class="fas fa-spa text-blue-500"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm">Relaxation</p>
+                                        <p class="text-xs text-gray-500">Avg. 58% this week</p>
+                                    </div>
+                                </div>
+                                <span class="text-sm font-medium text-blue-500">+12% <i class="fas fa-arrow-up"></i></span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center space-x-2">
+                                    <div class="h-10 w-10 rounded-full bg-yellow-100 flex items-center justify-center">
+                                        <i class="fas fa-flushed text-yellow-500"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm">Anxiety</p>
+                                        <p class="text-xs text-gray-500">Avg. 22% this week</p>
+                                    </div>
+                                </div>
+                                <span class="text-sm font-medium text-red-500">-5% <i class="fas fa-arrow-down"></i></span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center space-x-2">
+                                    <div class="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">
+                                        <i class="fas fa-tired text-red-500"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm">Stress</p>
+                                        <p class="text-xs text-gray-500">Avg. 12% this week</p>
+                                    </div>
+                                </div>
+                                <span class="text-sm font-medium text-red-500">-8% <i class="fas fa-arrow-down"></i></span>
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <h4 class="font-medium text-gray-700 mb-2">Overall Mood Trend</h4>
+                            <div class="h-40">
+                                <canvas id="moodTrendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Best/Worst Days -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 class="text-lg font-semibold mb-4">Best & Worst Days</h3>
+                        <div class="space-y-4">
+                            <div class="bg-green-50 rounded-lg p-4">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <p class="font-medium">Best Day</p>
+                                        <p class="text-sm text-gray-600">Wednesday, May 15</p>
+                                    </div>
+                                    <div class="text-2xl font-bold text-green-600">84%</div>
+                                </div>
+                                <div class="mt-2">
+                                    <p class="text-xs text-gray-500">Mostly happy and relaxed throughout the day</p>
+                                </div>
+                            </div>
+                            <div class="bg-red-50 rounded-lg p-4">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <p class="font-medium">Worst Day</p>
+                                        <p class="text-sm text-gray-600">Monday, May 13</p>
+                                    </div>
+                                    <div class="text-2xl font-bold text-red-600">32%</div>
+                                </div>
+                                <div class="mt-2">
+                                    <p class="text-xs text-gray-500">Vet visit in the morning caused prolonged stress</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recommendations -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 class="text-lg font-semibold mb-4">Recommendations</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start space-x-3">
+                                <div class="mt-1">
+                                    <i class="fas fa-bone text-indigo-500"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium">More Chew Toys</h4>
+                                    <p class="text-sm text-gray-600">Chewing reduces Max's anxiety by 32% based on past data</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="mt-1">
+                                    <i class="fas fa-walking text-green-500"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium">Morning Walks</h4>
+                                    <p class="text-sm text-gray-600">Days with morning walks show 18% higher happiness</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="mt-1">
+                                    <i class="fas fa-music text-purple-500"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium">Calming Music</h4>
+                                    <p class="text-sm text-gray-600">Try classical music during alone time to reduce stress</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="mt-1">
+                                    <i class="fas fa-clock text-yellow-500"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium">Consistent Schedule</h4>
+                                    <p class="text-sm text-gray-600">Keep feeding and walk times consistent to reduce anxiety</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Emotion Patterns -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 class="text-lg font-semibold mb-4">Emotion Patterns</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-medium text-gray-700 mb-1">By Time of Day</h4>
+                                <div class="h-40">
+                                    <canvas id="timePatternChart"></canvas>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-700 mb-1">By Activity</h4>
+                                <div class="grid grid-cols-3 gap-2 text-center">
+                                    <div class="bg-blue-50 p-2 rounded">
+                                        <i class="fas fa-walking text-blue-500"></i>
+                                        <p class="text-xs mt-1">Walks</p>
+                                        <p class="text-sm font-medium">78% happy</p>
+                                    </div>
+                                    <div class="bg-green-50 p-2 rounded">
+                                        <i class="fas fa-utensils text-green-500"></i>
+                                        <p class="text-xs mt-1">Feeding</p>
+                                        <p class="text-sm font-medium">85% happy</p>
+                                    </div>
+                                    <div class="bg-red-50 p-2 rounded">
+                                        <i class="fas fa-user-md text-red-500"></i>
+                                        <p class="text-xs mt-1">Vet</p>
+                                        <p class="text-sm font-medium">28% happy</p>
+                                    </div>
+                                    <div class="bg-purple-50 p-2 rounded">
+                                        <i class="fas fa-bone text-purple-500"></i>
+                                        <p class="text-xs mt-1">Play</p>
+                                        <p class="text-sm font-medium">92% happy</p>
+                                    </div>
+                                    <div class="bg-yellow-50 p-2 rounded">
+                                        <i class="fas fa-bed text-yellow-500"></i>
+                                        <p class="text-xs mt-1">Alone</p>
+                                        <p class="text-sm font-medium">45% happy</p>
+                                    </div>
+                                    <div class="bg-indigo-50 p-2 rounded">
+                                        <i class="fas fa-users text-indigo-500"></i>
+                                        <p class="text-xs mt-1">Visitors</p>
+                                        <p class="text-sm font-medium">62% happy</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Emotion Trends Chart
+        const emotionTrendsCtx = document.getElementById('emotionTrendsChart').getContext('2d');
+        const emotionTrendsChart = new Chart(emotionTrendsCtx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [
+                    {
+                        label: 'Happy',
+                        data: [65, 59, 80, 72, 76, 68, 72],
+                        borderColor: '#10B981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'Relaxed',
+                        data: [50, 45, 70, 65, 60, 55, 65],
+                        borderColor: '#3B82F6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'Anxious',
+                        data: [25, 30, 15, 20, 18, 22, 18],
+                        borderColor: '#F59E0B',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'Stressed',
+                        data: [15, 20, 8, 10, 12, 15, 8],
+                        borderColor: '#EF4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Mood Trend Chart
+        const moodTrendCtx = document.getElementById('moodTrendChart').getContext('2d');
+        const moodTrendChart = new Chart(moodTrendCtx, {
+            type: 'line',
+            data: {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                datasets: [{
+                    label: 'Average Happiness',
+                    data: [62, 68, 72, 75],
+                    borderColor: '#10B981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.raw + '% happiness';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        display: false,
+                        min: 50,
+                        max: 100
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // Time Pattern Chart
+        const timePatternCtx = document.getElementById('timePatternChart').getContext('2d');
+        const timePatternChart = new Chart(timePatternCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Morning', 'Afternoon', 'Evening', 'Night'],
+                datasets: [
+                    {
+                        label: 'Happy',
+                        data: [75, 82, 68, 60],
+                        backgroundColor: '#10B981',
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Anxious',
+                        data: [15, 10, 25, 30],
+                        backgroundColor: '#F59E0B',
+                        borderRadius: 4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.raw + '%';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Simulate live updates
+        function simulateLiveUpdates() {
+            setInterval(() => {
+                // Update current emotion values randomly
+                const happyValue = Math.floor(Math.random() * 10) + 68;
+                document.querySelectorAll('.text-xl.font-bold.text-green-600')[0].textContent = happyValue + '%';
+                
+                const relaxedValue = Math.floor(Math.random() * 10) + 60;
+                document.querySelectorAll('.text-xl.font-bold.text-blue-600')[0].textContent = relaxedValue + '%';
+                
+                const anxiousValue = Math.floor(Math.random() * 10) + 12;
+                document.querySelectorAll('.text-xl.font-bold.text-yellow-600')[0].textContent = anxiousValue + '%';
+                
+                const stressedValue = Math.floor(Math.random() * 10) + 3;
+                document.querySelectorAll('.text-xl.font-bold.text-red-600')[0].textContent = stressedValue + '%';
+                
+                // Update "updated" time
+                const now = new Date();
+                const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                document.querySelector('.text-sm.text-gray-500').textContent = 'Updated: ' + timeString;
+            }, 5000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            simulateLiveUpdates();
+        });
+    </script>
+</body>
+</html>
