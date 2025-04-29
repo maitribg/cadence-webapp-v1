@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WoofWise - Location Tracking</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        woofPurple: '#c34bc9',
+                        woofDark: '#141627',
+                        woofIndigo: '#574ce7',
+                        woofGray: '#61627c',
+                        woofBlue: '#6199f5',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .map-container {
+            height: 300px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .timeline-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 24px;
+            top: 32px;
+            height: calc(100% - 32px);
+            width: 2px;
+            background: #e5e7eb;
+        }
+        
+        .alert-pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(195, 75, 201, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(195, 75, 201, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(195, 75, 201, 0);
+            }
+        }
+        
+        .dog-marker {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23c34bc9"><path d="M18.5 12c0-1.77-1.02-3.29-2.5-4.03v2.02l4 1v-5h-5l-1 4-1-4h-5v5l4-1v-2.02c-1.48.74-2.5 2.26-2.5 4.03 0 1.93 1.57 3.5 3.5 3.5s3.5-1.57 3.5-3.5z"/></svg>');
+            background-size: cover;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-white min-h-screen">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-woofIndigo to-woofPurple text-white px-4 py-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <button onclick="window.history.back()" class="bg-white/20 hover:bg-white/30 p-2 rounded-full transition">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div class="flex items-center">
+                    <i class="fas fa-paw text-2xl mr-2"></i>
+                    <h1 class="text-xl font-bold">WoofWise</h1>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="text-sm bg-white/20 px-3 py-1 rounded-full">Live</span>
+                <div class="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-6">
+        <!-- Pet Info -->
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 rounded-full bg-woofPurple/20 flex items-center justify-center">
+                    <i class="fas fa-dog text-woofPurple text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="font-bold text-woofDark">Buddy</h2>
+                    <p class="text-sm text-woofGray">Golden Retriever • 3 years</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="text-sm text-woofGray">Battery</p>
+                <div class="flex items-center space-x-1">
+                    <div class="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-green-500 rounded-full" style="width: 85%"></div>
+                    </div>
+                    <span class="text-xs font-medium">85%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map Section -->
+        <div class="mb-6">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="font-bold text-woofDark flex items-center">
+                    <i class="fas fa-map-marker-alt text-woofPurple mr-2"></i>
+                    Current Location
+                </h3>
+                <span class="text-sm text-woofGray">Updated: Just now</span>
+            </div>
+            <div class="map-container bg-gray-200 relative">
+                <!-- This would be replaced with an actual map implementation -->
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="text-center">
+                        <div class="dog-marker mx-auto mb-2"></div>
+                        <p class="text-woofDark font-medium">Central Park</p>
+                        <p class="text-sm text-woofGray">New York, NY</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="bg-woofBlue/10 p-4 rounded-xl">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-woofGray">Distance from Home</p>
+                        <p class="text-xl font-bold text-woofDark">0.8 km</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-woofBlue/20 flex items-center justify-center">
+                        <i class="fas fa-home text-woofBlue"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-woofPurple/10 p-4 rounded-xl">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-woofGray">Activity Level</p>
+                        <p class="text-xl font-bold text-woofDark">High</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-woofPurple/20 flex items-center justify-center">
+                        <i class="fas fa-bolt text-woofPurple"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alert Card -->
+        <div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 alert-pulse">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+                        <i class="fas fa-exclamation text-red-500"></i>
+                    </div>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-red-800">Left Safe Zone</h3>
+                    <p class="text-sm text-red-700 mt-1">Buddy has wandered outside your designated safe area.</p>
+                    <div class="mt-2">
+                        <button class="inline-flex items-center text-sm font-medium text-red-700 hover:text-red-600">
+                            View safe zone
+                            <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Directions Button -->
+        <button class="w-full bg-woofIndigo hover:bg-woofIndigo/90 text-white font-medium py-3 px-4 rounded-xl mb-6 transition flex items-center justify-center">
+            <i class="fas fa-directions mr-2"></i>
+            Get Directions to Buddy
+        </button>
+
+        <!-- Location History -->
+        <div>
+            <h3 class="font-bold text-woofDark flex items-center mb-3">
+                <i class="fas fa-history text-woofPurple mr-2"></i>
+                Location History
+            </h3>
+            <div class="space-y-4">
+                <!-- Timeline Item -->
+                <div class="timeline-item relative pl-12">
+                    <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-woofPurple/10 flex items-center justify-center">
+                        <i class="fas fa-paw text-woofPurple text-sm"></i>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="font-medium text-woofDark">Central Park</p>
+                                <p class="text-sm text-woofGray">New York, NY</p>
+                            </div>
+                            <span class="text-xs bg-woofBlue/10 text-woofBlue px-2 py-1 rounded-full">Current</span>
+                        </div>
+                        <p class="text-xs text-woofGray mt-1 flex items-center">
+                            <i class="far fa-clock mr-1"></i> Just now
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Timeline Item -->
+                <div class="timeline-item relative pl-12">
+                    <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-woofBlue/10 flex items-center justify-center">
+                        <i class="fas fa-map-pin text-woofBlue text-sm"></i>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="font-medium text-woofDark">Riverside Walk</p>
+                                <p class="text-sm text-woofGray">New York, NY</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-woofGray mt-1 flex items-center">
+                            <i class="far fa-clock mr-1"></i> 10 minutes ago
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Timeline Item -->
+                <div class="timeline-item relative pl-12">
+                    <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-woofIndigo/10 flex items-center justify-center">
+                        <i class="fas fa-bone text-woofIndigo text-sm"></i>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="font-medium text-woofDark">Dog Park</p>
+                                <p class="text-sm text-woofGray">New York, NY</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-woofGray mt-1 flex items-center">
+                            <i class="far fa-clock mr-1"></i> 25 minutes ago
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Timeline Item -->
+                <div class="timeline-item relative pl-12">
+                    <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-woofGray/10 flex items-center justify-center">
+                        <i class="fas fa-home text-woofGray text-sm"></i>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="font-medium text-woofDark">Home</p>
+                                <p class="text-sm text-woofGray">123 Woof St, NY</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-woofGray mt-1 flex items-center">
+                            <i class="far fa-clock mr-1"></i> 1 hour ago
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2">
+        <div class="flex justify-around">
+            <a href="#" class="flex flex-col items-center text-woofPurple">
+                <i class="fas fa-map-marked-alt text-xl"></i>
+                <span class="text-xs mt-1">Map</span>
+            </a>
+            <a href="#" class="flex flex-col items-center text-woofGray">
+                <i class="fas fa-chart-line text-xl"></i>
+                <span class="text-xs mt-1">Activity</span>
+            </a>
+            <a href="#" class="flex flex-col items-center text-woofGray">
+                <i class="fas fa-bell text-xl"></i>
+                <span class="text-xs mt-1">Alerts</span>
+            </a>
+            <a href="#" class="flex flex-col items-center text-woofGray">
+                <i class="fas fa-cog text-xl"></i>
+                <span class="text-xs mt-1">Settings</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // This would be replaced with actual map functionality
+        console.log('Location tracking page loaded');
+        
+        // Simulate alert dismissal
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.alert-pulse')) {
+                e.target.closest('.alert-pulse').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
